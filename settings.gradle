@@ -1,0 +1,6 @@
+rootProject.name = 'socks'
+
+include('commons')
+include('netty')
+include('advance:server')
+include('advance:client')
