@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package org.iproute.socks5.commons;
+package org.iproute.commons.utils;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
