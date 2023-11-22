@@ -36,10 +36,7 @@ public class MsgDecoder extends ByteToMessageDecoder {
         byte[] content = new byte[len];
         in.readBytes(content);
 
-        out.add(Msg.builder().len(len)
-                .content(content)
-                .build());
-
+        out.add(Msg.fromJson(new String(content)));
     }
 }
 

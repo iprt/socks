@@ -14,7 +14,13 @@ public class MsgEncoder extends MessageToByteEncoder<Msg> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Msg msg, ByteBuf out) throws Exception {
-        out.writeInt(msg.getLen());
-        out.writeBytes(msg.getContent());
+
+        String json = msg.toJson();
+
+        byte[] bytes = json.getBytes();
+
+        out.writeInt(bytes.length);
+        out.writeBytes(bytes);
+
     }
 }
