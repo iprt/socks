@@ -1,6 +1,8 @@
 package org.iproute.client;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -32,7 +34,15 @@ public class ClientMain {
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new SocksServerInitializer());
-            b.bind(PORT).sync().channel().closeFuture().sync();
+
+            // bind port
+            ChannelFuture sync = b.bind(PORT).sync();
+
+            sync.addListener((ChannelFutureListener) future -> {
+                log.info("ClientMain listen on port {}", PORT);
+            });
+
+            sync.channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

@@ -1,6 +1,8 @@
 package org.iproute.server;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -23,8 +25,6 @@ public class ServerMain {
             )));
 
     public static void main(String[] args) throws Exception {
-        log.info("ServerMain will listening port is {}", PORT);
-
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -37,7 +37,14 @@ public class ServerMain {
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new ServerInitializer());
 
-            b.bind(PORT).sync().channel().closeFuture().sync();
+            // bind port
+            ChannelFuture sync = b.bind(PORT).sync();
+
+            sync.addListener((ChannelFutureListener) future -> {
+                log.info("ServerMain listen on port {}", PORT);
+            });
+
+            sync.channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
