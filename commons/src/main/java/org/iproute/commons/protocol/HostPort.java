@@ -19,4 +19,11 @@ import lombok.ToString;
 public class HostPort {
     private String host;
     private int port;
+
+    public static HostPort defaultServerConfig() {
+        return HostPort.builder()
+                .host("127.0.0.1").port(10888)
+                .build();
+    }
+
 }

@@ -1,4 +1,4 @@
-package org.iproute.client.handler.advance;
+package org.iproute.server.handler.relay;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -9,11 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.iproute.commons.utils.SocksServerUtils;
 
 @Slf4j
-public final class RelayHandler extends ChannelInboundHandlerAdapter {
+public final class ReadClientRelayWebHandler extends ChannelInboundHandlerAdapter {
 
     private final Channel relayChannel;
 
-    public RelayHandler(Channel relayChannel) {
+    public ReadClientRelayWebHandler(Channel relayChannel) {
+        // put client-server channel
         this.relayChannel = relayChannel;
     }
 
@@ -25,6 +26,7 @@ public final class RelayHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         if (relayChannel.isActive()) {
+            // TODO: decrypt msg then writeAndFlush to website
             relayChannel.writeAndFlush(msg);
         } else {
             ReferenceCountUtil.release(msg);
@@ -41,7 +43,7 @@ public final class RelayHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         // cause.printStackTrace();
-        log.error("RelayHandler.exceptionCaught", cause);
+        log.error("WebsiteRelayHandler.exceptionCaught", cause);
         ctx.close();
     }
 }

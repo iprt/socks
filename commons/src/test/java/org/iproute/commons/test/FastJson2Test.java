@@ -1,7 +1,7 @@
 package org.iproute.commons.test;
 
 import com.alibaba.fastjson2.JSON;
-import org.iproute.commons.advance.HostPortConfig;
+import org.iproute.commons.protocol.HostPort;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -14,7 +14,7 @@ public class FastJson2Test {
     @Test
     public void serialize() {
         System.out.println(
-                JSON.toJSON(HostPortConfig.get())
+                JSON.toJSON(HostPort.defaultServerConfig())
         );
     }
 
@@ -24,7 +24,7 @@ public class FastJson2Test {
                 {"host":"127.0.0.1","port":10888}
                 """;
 
-        HostPortConfig config = JSON.parseObject(json, HostPortConfig.class);
+        HostPort config = JSON.parseObject(json, HostPort.class);
 
         System.out.println(config);
     }

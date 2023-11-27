@@ -1,15 +1,19 @@
 # Netty Sock5
 
+## reference
+
+https://github.com/netty/netty/tree/4.1/example/src/main/java/io/netty/example/socksproxy
+
 ## how to build
 
 > prepare java development kit
 
-
+### build `commons.jar`
 
 `windows`
 
 ```bat
-gradlew.bat clean build
+gradlew.bat commons:clean commons:build
 ```
 
 `linux`
@@ -17,7 +21,23 @@ gradlew.bat clean build
 ```shell
 chmod +x gradlew
 
-./gradlew clean build
+./gradlew commons:clean commons:build
+```
+
+### build `socks5.jar`
+
+`windows`
+
+```bat
+gradlew.bat netty:clean netty:build
+```
+
+`linux`
+
+```shell
+chmod +x gradlew
+
+./gradlew netty:clean netty:build
 ```
 
 ## how to run

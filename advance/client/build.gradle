@@ -16,3 +16,15 @@ dependencies {
     compileOnly('org.projectlombok:lombok:1.18.24')
     annotationProcessor('org.projectlombok:lombok:1.18.24')
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.iproute.client.ClientMain'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    archiveFileName = "client.jar"
+}
