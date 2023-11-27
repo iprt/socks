@@ -1,5 +1,8 @@
 # Advance
 
+try
+start [ClientMain](client/src/main/java/org/iproute/client/ClientMain.java) & [ServerMain](server/src/main/java/org/iproute/server/ServerMain.java)
+
 ## TEST
 
 ```shell
