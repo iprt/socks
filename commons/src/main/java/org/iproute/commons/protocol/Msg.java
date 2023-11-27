@@ -20,8 +20,7 @@ import lombok.ToString;
 @Builder
 @Data
 public class Msg {
-    private boolean success;
-
+    private String connectTag;
     private HostPort hostPort;
 
     public String toJson() {
@@ -32,8 +31,15 @@ public class Msg {
         try {
             return JSON.parseObject(json, Msg.class);
         } catch (Exception e) {
-            return Msg.builder().success(false).build();
+            return Msg.builder().connectTag(ConnectTag.OTHER).build();
         }
+    }
+
+    public interface ConnectTag {
+        String TRY = "try";
+        String SUCCESS = "success";
+        String FAILURE = "failure";
+        String OTHER = "other";
     }
 
 }

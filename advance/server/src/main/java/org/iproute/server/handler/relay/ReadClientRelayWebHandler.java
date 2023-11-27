@@ -14,7 +14,7 @@ public final class ReadClientRelayWebHandler extends ChannelInboundHandlerAdapte
     private final Channel relayChannel;
 
     public ReadClientRelayWebHandler(Channel relayChannel) {
-        // put client-server channel
+        // put client<--->server channel
         this.relayChannel = relayChannel;
     }
 
@@ -36,14 +36,16 @@ public final class ReadClientRelayWebHandler extends ChannelInboundHandlerAdapte
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         if (relayChannel.isActive()) {
-            SocksServerUtils.closeOnFlush(relayChannel);
+            SocksServerUtils.closeOnFlush(relayChannel, "ReadClientRelayWebHandler.channelInactive");
+        } else {
+            log.info("relayChannel is not active: ReadClientRelayWebHandler.channelInactive");
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         // cause.printStackTrace();
-        log.error("WebsiteRelayHandler.exceptionCaught", cause);
+        log.error("exceptionCaught", cause);
         ctx.close();
     }
 }

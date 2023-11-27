@@ -14,7 +14,7 @@ public final class ReadServerRelayUserHandler extends ChannelInboundHandlerAdapt
     private final Channel relayChannel;
 
     public ReadServerRelayUserHandler(Channel relayChannel) {
-        // put server's channel
+        // put client<--->user channel
         this.relayChannel = relayChannel;
     }
 
@@ -36,14 +36,16 @@ public final class ReadServerRelayUserHandler extends ChannelInboundHandlerAdapt
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         if (relayChannel.isActive()) {
-            SocksServerUtils.closeOnFlush(relayChannel);
+            SocksServerUtils.closeOnFlush(relayChannel, "ReadServerRelayUserHandler.channelInactive");
+        } else {
+            log.info("relayChannel is not active: ReadServerRelayUserHandler.channelInactive");
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         // cause.printStackTrace();
-        log.error("RelayHandler.exceptionCaught", cause);
+        log.error("exceptionCaught", cause);
         ctx.close();
     }
 }

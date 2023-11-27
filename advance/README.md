@@ -3,5 +3,5 @@
 ## TEST
 
 ```shell
-curl -L https://bing.com -x socks5://127.0.0.1:1080
+curl -L https://ipcrystal.com -x socks5://127.0.0.1:1080
 ```

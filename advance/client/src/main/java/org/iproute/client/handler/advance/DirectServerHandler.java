@@ -26,31 +26,27 @@ public final class DirectServerHandler extends SimpleChannelInboundHandler<Msg> 
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        log.info("connect to socks-server success,then writeAndFlush msg");
-        ctx.writeAndFlush(
-                Msg.builder()
-                        .hostPort(
-                                HostPort.builder()
-                                        .host(dstAddr)
-                                        .port(dstPort)
-                                        .build()
-                        ).build()
-        );
+        Msg msg = Msg.builder()
+                .connectTag(Msg.ConnectTag.TRY)
+                .hostPort(
+                        HostPort.builder().host(dstAddr).port(dstPort).build()
+                ).build();
+        log.info("connect to socks-server success,then writeAndFlush msg|msg is {}", msg.toJson());
+        ctx.writeAndFlush(msg);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Msg msg) throws Exception {
-        log.info("receive from server {}", msg);
-        boolean success = msg.isSuccess();
-        if (success) {
+        log.info("receive from server |msg = {}", msg.toJson());
+        if (Msg.ConnectTag.SUCCESS.equals(msg.getConnectTag())) {
             ctx.pipeline().remove(this);
             ctx.pipeline().remove(MsgDecoder.class);
             ctx.pipeline().remove(MsgEncoder.class);
 
-            // success , reuse channel
+            // success and set channel then reuse
             promise.setSuccess(ctx.channel());
         } else {
-            promise.setFailure(new RuntimeException("receive msg say not success"));
+            promise.setFailure(new RuntimeException(msg.toJson()));
         }
     }
 

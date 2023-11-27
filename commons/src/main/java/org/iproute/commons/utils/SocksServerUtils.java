@@ -18,7 +18,9 @@ package org.iproute.commons.utils;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class SocksServerUtils {
 
     /**
@@ -26,6 +28,16 @@ public final class SocksServerUtils {
      */
     public static void closeOnFlush(Channel ch) {
         if (ch.isActive()) {
+            ch.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+        }
+    }
+
+    /**
+     * Closes the specified channel after all queued write requests are flushed.
+     */
+    public static void closeOnFlush(Channel ch, String desc) {
+        if (ch.isActive()) {
+            log.info("close on flush : {}", desc);
             ch.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
         }
     }

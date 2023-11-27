@@ -33,8 +33,6 @@ public class ConnectHandler extends SimpleChannelInboundHandler<Msg> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Msg msg) throws Exception {
-        log.info("receive from client {}", msg);
-
         Promise<Channel> promise = ctx.executor().newPromise();
         promise.addListener(new FutureListener<Channel>() {
 
@@ -43,7 +41,7 @@ public class ConnectHandler extends SimpleChannelInboundHandler<Msg> {
                 final Channel websiteChannel = future.getNow();
                 if (future.isSuccess()) {
                     ChannelFuture responseFuture = ctx.channel().writeAndFlush(
-                            Msg.builder().success(true).build()
+                            Msg.builder().connectTag(Msg.ConnectTag.SUCCESS).build()
                     );
 
                     responseFuture.addListener(new ChannelFutureListener() {
@@ -52,7 +50,7 @@ public class ConnectHandler extends SimpleChannelInboundHandler<Msg> {
                             ctx.pipeline().remove(ConnectHandler.class);
                             ctx.pipeline().remove(MsgDecoder.class);
                             ctx.pipeline().remove(MsgEncoder.class);
-                            // 网站收取到的数据直接write到客户端
+
                             websiteChannel.pipeline().addLast(
                                     new ReadWebRelayClientHandler(ctx.channel())
                             );
@@ -64,7 +62,7 @@ public class ConnectHandler extends SimpleChannelInboundHandler<Msg> {
                     });
                 } else {
                     ctx.channel().writeAndFlush(
-                            Msg.builder().success(false).build()
+                            Msg.builder().connectTag(Msg.ConnectTag.FAILURE).build()
                     );
 
                     SocksServerUtils.closeOnFlush(ctx.channel());
@@ -78,16 +76,19 @@ public class ConnectHandler extends SimpleChannelInboundHandler<Msg> {
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new DirectClientHandler(promise));
-                    }
-                });
+                             @Override
+                             protected void initChannel(SocketChannel ch) throws Exception {
+                                 ch.pipeline().addLast(new DirectClientHandler(promise));
+                             }
+                         }
+                );
+
+
+        log.info("receive from client | msg = {}", msg.toJson());
 
         String webHost = msg.getHostPort().getHost();
         int webPort = msg.getHostPort().getPort();
 
-        log.info("try to connect {}:{}", webHost, webPort);
         b.connect(webHost, webPort).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
@@ -98,7 +99,7 @@ public class ConnectHandler extends SimpleChannelInboundHandler<Msg> {
                     // Close the connection if the connection attempt has failed.
                     log.info("Close the connection if the connection attempt has failed.");
                     ctx.channel().writeAndFlush(
-                            Msg.builder().success(false).build()
+                            Msg.builder().connectTag(Msg.ConnectTag.FAILURE).build()
                     );
                     SocksServerUtils.closeOnFlush(ctx.channel());
                 }
