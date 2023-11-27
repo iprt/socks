@@ -39,7 +39,7 @@ public class ClientMain {
             ChannelFuture sync = b.bind(PORT).sync();
 
             sync.addListener((ChannelFutureListener) future -> {
-                log.info("ClientMain listen on port {}", PORT);
+                log.info("Client started on port(s): {}", PORT);
             });
 
             sync.channel().closeFuture().sync();

@@ -31,7 +31,6 @@ public class ServerMain {
         try {
             ServerBootstrap b = new ServerBootstrap();
 
-
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
@@ -41,7 +40,7 @@ public class ServerMain {
             ChannelFuture sync = b.bind(PORT).sync();
 
             sync.addListener((ChannelFutureListener) future -> {
-                log.info("ServerMain listen on port {}", PORT);
+                log.info("Server started on port(s): {}", PORT);
             });
 
             sync.channel().closeFuture().sync();
