@@ -9,6 +9,8 @@ import lombok.ToString;
 
 /**
  * Msg
+ * <p>
+ * //TODO: encrypt & decrypt
  *
  * @author zhuzhenjie
  */
