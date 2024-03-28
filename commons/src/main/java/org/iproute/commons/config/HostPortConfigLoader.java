@@ -1,9 +1,15 @@
 package org.iproute.commons.config;
 
+import com.alibaba.fastjson2.JSON;
 import lombok.Getter;
+import org.apache.commons.io.IOUtils;
 import org.iproute.commons.protocol.HostPort;
 
-import java.util.Properties;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * HostPortConfig
@@ -18,20 +24,27 @@ public class HostPortConfigLoader {
     private HostPort hostPort;
 
     private HostPortConfigLoader() {
-        Properties properties = new Properties();
+        InputStream in = null;
         try {
-            properties.load(HostPortConfigLoader.class.getResourceAsStream("server_config.properties"));
-
-            String host = properties.getProperty("host");
-            String port = properties.getProperty("port");
-
-            hostPort = HostPort.builder()
-                    .host(host).port(Integer.parseInt(port))
-                    .build();
-
+            in = this.getClass().getClassLoader().getResourceAsStream(
+                    "server_config.json"
+            );
+            if (Objects.isNull(in)) {
+                this.hostPort = HostPort.defaultServerConfig();
+                return;
+            }
+            List<String> lines = IOUtils.readLines(in, Charset.defaultCharset());
+            String configJson = lines.stream().reduce((a, b) -> a + b).orElseGet(() -> "{}");
+            this.hostPort = JSON.parseObject(configJson, HostPort.class);
         } catch (Exception e) {
             this.hostPort = HostPort.defaultServerConfig();
         }
+        try {
+            IOUtils.close(in);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public static HostPortConfigLoader instance() {
