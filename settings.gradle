@@ -1,5 +1,11 @@
 rootProject.name = 'socks'
 
+dependencyResolutionManagement {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+    }
+}
+
 include('commons')
 include('netty')
 include('advance:server')
