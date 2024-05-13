@@ -13,9 +13,9 @@ bash <(curl -SL https://code.kubectl.net/devops/build-project/raw/branch/main/gr
   -i "gradle:8.4" \
   -x "gradle clean :commons:build -x test && gradle :netty:clean :netty:build"
 
-jar_name="socks5.jar"
+jar_name="socks.jar"
 
-cd netty/
+cd netty-socks/
 
 if [ ! -f "build/libs/$jar_name" ]; then
   log "verify" "gradle build failed"
