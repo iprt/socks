@@ -10,7 +10,7 @@ RUN dd if=/dev/urandom of=/random_file bs=1K count=1
 
 WORKDIR /opt/app
 
-ADD build/libs/socks5.jar socks.jar
+ADD build/libs/socks.jar socks.jar
 
 EXPOSE 1080
 
