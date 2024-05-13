@@ -28,3 +28,8 @@ jar {
 
     archiveFileName = "tcp-proxy.jar"
 }
+
+tasks.named("compileJava") {
+    // mustRunAfter(":commons:build")
+    dependsOn(":commons:build")
+}

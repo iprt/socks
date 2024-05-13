@@ -7,11 +7,12 @@ cd "$SHELL_FOLDER"
 source <(curl -sSL https://code.kubectl.net/devops/build-project/raw/branch/main/func/log.sh)
 
 cd ../
+
 log "build" "step1 build jar"
 bash <(curl -SL https://code.kubectl.net/devops/build-project/raw/branch/main/gradle/build.sh) \
-  -c "gradle-8.4_cache" \
-  -i "gradle:8.4" \
-  -x "gradle clean :commons:build -x test && gradle :netty:clean :netty:build"
+  -c "gradle-8.4-jdk17_cache" \
+  -i "gradle:8.4-jdk17" \
+  -x "gradle clean :netty-socks:build"
 
 jar_name="socks.jar"
 
