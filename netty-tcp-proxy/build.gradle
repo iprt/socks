@@ -19,12 +19,12 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'org.iproute.SocksServer'
+        attributes 'Main-Class': 'org.iproute.HexDumpProxy'
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
-    archiveFileName = "socks.jar"
+    archiveFileName = "tcp-proxy.jar"
 }
