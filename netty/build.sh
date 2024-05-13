@@ -11,7 +11,7 @@ log "build" "step1 build jar"
 bash <(curl -SL https://code.kubectl.net/devops/build-project/raw/branch/main/gradle/build.sh) \
   -c "gradle-8.4_cache" \
   -i "gradle:8.4" \
-  -x "gradle clean :netty:build -x test"
+  -x "gradle clean :commons:build -x test && gradle :netty:build"
 
 jar_name="socks5.jar"
 
