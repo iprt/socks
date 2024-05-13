@@ -9,7 +9,7 @@
 
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>
-            ./logs/socks5.log
+            ./logs/tcp-proxy.log
         </file>
         <append>true</append>
         <encoder>
@@ -20,7 +20,7 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>
-                ./logs/socks5-%d{yyyy-MM-dd}.%i.log
+                ./logs/tcp-proxy-%d{yyyy-MM-dd}.%i.log
             </fileNamePattern>
             <maxHistory>30</maxHistory>
             <maxFileSize>20MB</maxFileSize>
