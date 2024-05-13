@@ -24,7 +24,7 @@ if [ ! -f "build/libs/$jar_name" ]; then
 fi
 
 log "build" "step2 build & push image"
-image_name="registry.cn-shanghai.aliyuncs.com/iproute/netty-socks5"
+image_name="registry.cn-shanghai.aliyuncs.com/iproute/netty-socks"
 
 bash <(curl -SL https://code.kubectl.net/devops/build-project/raw/branch/main/docker/build.sh) \
   -i "$image_name" \

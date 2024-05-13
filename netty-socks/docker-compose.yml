@@ -2,7 +2,7 @@ version: "3"
 
 services:
   socks5:
-    image: "registry.cn-shanghai.aliyuncs.com/iproute/netty-socks5:latest"
+    image: "registry.cn-shanghai.aliyuncs.com/iproute/netty-socks:latest"
     container_name: "netty-socks5"
     network_mode: host
     volumes:
