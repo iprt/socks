@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  socks5:
+    image: "registry.cn-shanghai.aliyuncs.com/iproute/netty-socks5:latest"
+    container_name: "netty-socks5"
+    network_mode: host
+    volumes:
+      - "./log:/opt/app/logs"
+    environment:
+      - JAVA_OPTIONS=-Xms64M -Xmx64M
+      - TZ=Asia/Shanghai
