@@ -6,7 +6,7 @@ services:
     container_name: "netty-socks5"
     network_mode: host
     volumes:
-      - "./log:/opt/app/logs"
+      - "./logs:/opt/app/logs"
     environment:
       - JAVA_OPTIONS=-Xms64M -Xmx64M
       - TZ=Asia/Shanghai
