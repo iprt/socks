@@ -20,13 +20,30 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.socksx.SocksPortUnificationServerHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import lombok.Getter;
 
 public final class SocksServerInitializer extends ChannelInitializer<SocketChannel> {
+
+    @Getter
+    private final boolean needAuth;
+
+    private final SocksServerHandler socksServerHandler;
+
+    public SocksServerInitializer(boolean needAuth) {
+        this.needAuth = needAuth;
+        socksServerHandler = this.needAuth ? SocksServerHandler.INSTANCE_NEED_AUTH : SocksServerHandler.INSTANCE;
+        if (this.needAuth) {
+            socksServerHandler.initUserAndPass();
+        }
+
+    }
+
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         ch.pipeline().addLast(
                 new LoggingHandler(LogLevel.DEBUG),
                 new SocksPortUnificationServerHandler(),
-                SocksServerHandler.INSTANCE);
+                socksServerHandler
+        );
     }
 }

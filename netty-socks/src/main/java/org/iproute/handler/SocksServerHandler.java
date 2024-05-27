@@ -29,17 +29,31 @@ import io.netty.handler.codec.socksx.v5.Socks5CommandRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5CommandType;
 import io.netty.handler.codec.socksx.v5.Socks5InitialRequest;
 import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthRequest;
+import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthStatus;
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.iproute.commons.utils.SocksServerUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 @ChannelHandler.Sharable
 @Slf4j
 public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksMessage> {
 
-    public static final SocksServerHandler INSTANCE = new SocksServerHandler();
+    public static final SocksServerHandler INSTANCE = new SocksServerHandler(false);
+    public static final SocksServerHandler INSTANCE_NEED_AUTH = new SocksServerHandler(true);
 
-    private SocksServerHandler() {
+    private final static Map<String, String> user_pass = new HashMap<>();
+
+    private final boolean needAuth;
+
+    private SocksServerHandler(boolean needAuth) {
+        this.needAuth = needAuth;
     }
 
     @Override
@@ -60,11 +74,30 @@ public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksM
                     // auth support example
                     // ctx.pipeline().addFirst(new Socks5PasswordAuthRequestDecoder());
                     // ctx.write(new DefaultSocks5AuthMethodResponse(Socks5AuthMethod.PASSWORD));
-                    ctx.pipeline().addFirst(new Socks5CommandRequestDecoder());
-                    ctx.write(new DefaultSocks5InitialResponse(Socks5AuthMethod.NO_AUTH));
-                } else if (socksRequest instanceof Socks5PasswordAuthRequest) {
-                    ctx.pipeline().addFirst(new Socks5CommandRequestDecoder());
-                    ctx.write(new DefaultSocks5PasswordAuthResponse(Socks5PasswordAuthStatus.SUCCESS));
+                    if (needAuth) {
+                        ctx.pipeline().addFirst(new Socks5PasswordAuthRequestDecoder());
+                        ctx.write(new DefaultSocks5InitialResponse(Socks5AuthMethod.PASSWORD));
+                    } else {
+                        ctx.pipeline().addFirst(new Socks5CommandRequestDecoder());
+                        ctx.write(new DefaultSocks5InitialResponse(Socks5AuthMethod.NO_AUTH));
+                    }
+                } else if (socksRequest instanceof Socks5PasswordAuthRequest socks5PasswordAuthRequest) {
+                    String username = socks5PasswordAuthRequest.username();
+                    if (StringUtil.isNullOrEmpty(username)) {
+                        log.error("username is empty");
+                        ctx.write(new DefaultSocks5PasswordAuthResponse(Socks5PasswordAuthStatus.FAILURE));
+                    } else if (!user_pass.containsKey(username)) {
+                        log.error("username is not found | username = {}", username);
+                        ctx.write(new DefaultSocks5PasswordAuthResponse(Socks5PasswordAuthStatus.FAILURE));
+                    } else if (!user_pass.get(username).equals(socks5PasswordAuthRequest.password())) {
+                        log.error("password is not match | username = {}", username);
+                        ctx.write(new DefaultSocks5PasswordAuthResponse(Socks5PasswordAuthStatus.FAILURE));
+                    } else {
+                        // ctx.pipeline().remove(Socks5PasswordAuthRequestDecoder.class);
+                        ctx.pipeline().removeFirst();
+                        ctx.pipeline().addFirst(new Socks5CommandRequestDecoder());
+                        ctx.write(new DefaultSocks5PasswordAuthResponse(Socks5PasswordAuthStatus.SUCCESS));
+                    }
                 } else if (socksRequest instanceof Socks5CommandRequest socks5CmdRequest) {
                     if (socks5CmdRequest.type() == Socks5CommandType.CONNECT) {
                         ctx.pipeline().addLast(new SocksServerConnectHandler());
@@ -83,6 +116,7 @@ public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksM
         }
     }
 
+
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
         ctx.flush();
@@ -92,5 +126,29 @@ public final class SocksServerHandler extends SimpleChannelInboundHandler<SocksM
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable throwable) {
         log.error("", throwable);
         SocksServerUtils.closeOnFlush(ctx.channel());
+    }
+
+    void initUserAndPass() {
+        InputStream is = null;
+        try {
+            is = ClassLoader.getSystemResourceAsStream("user_pass.properties");
+
+            Properties prop = new Properties();
+            prop.load(is);
+            prop.keySet().forEach(key -> {
+                log.info("username {} & password {}", key, prop.getProperty(key.toString()));
+                user_pass.put(key.toString(), prop.getProperty(key.toString()));
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }

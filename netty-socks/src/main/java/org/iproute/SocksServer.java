@@ -31,6 +31,8 @@ public final class SocksServer {
 
     static final int PORT = Integer.parseInt(System.getProperty("port", "1080"));
 
+    static final boolean USE_AUTH = Boolean.parseBoolean(System.getProperty("useAuth", "false"));
+
     static final boolean USE_EPOLL = Boolean.parseBoolean(System.getProperty("useEpoll", "false"));
 
     public static void main(String[] args) throws Exception {
@@ -54,7 +56,7 @@ public final class SocksServer {
             b.group(bossGroup, workerGroup)
                     .channel(epoll ? EpollServerSocketChannel.class : NioServerSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new SocksServerInitializer());
+                    .childHandler(new SocksServerInitializer(USE_AUTH));
             b.bind(PORT).sync().channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
