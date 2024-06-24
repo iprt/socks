@@ -8,8 +8,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 /**
  * HexDumpProxyBackendHandler
  *
- * @author winterfell
- * @since 2022/7/10
+ * @author devops@kubectl.net
  */
 public class HexDumpProxyBackendHandler extends ChannelInboundHandlerAdapter {
     private final Channel inboundChannel;

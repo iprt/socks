@@ -9,8 +9,7 @@ import io.netty.handler.logging.LoggingHandler;
 /**
  * HexDumpProxyInitializer
  *
- * @author winterfell
- * @since 2022/7/10
+ * @author devops@kubectl.net
  */
 public class HexDumpProxyInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -31,4 +30,5 @@ public class HexDumpProxyInitializer extends ChannelInitializer<SocketChannel> {
                 new HexDumpProxyFrontendHandler(remoteHost, remotePort)
         );
     }
+
 }

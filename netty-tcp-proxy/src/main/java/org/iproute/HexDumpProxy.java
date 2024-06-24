@@ -17,8 +17,7 @@ import java.util.Properties;
 /**
  * HexDumpProxy
  *
- * @author winterfell
- * @since 2022/7/10
+ * @author devops@kubectl.net
  */
 @Slf4j
 public final class HexDumpProxy {

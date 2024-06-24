@@ -12,8 +12,7 @@ import io.netty.channel.ChannelOption;
 /**
  * HexDumpProxyFrontendHandler
  *
- * @author winterfell
- * @since 2022/7/10
+ * @author devops@kubectl.net
  */
 public class HexDumpProxyFrontendHandler extends ChannelInboundHandlerAdapter {
 

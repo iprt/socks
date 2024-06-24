@@ -31,3 +31,5 @@ bash <(curl -SL https://code.kubectl.net/devops/build-project/raw/branch/main/do
   -v "latest" \
   -r "false" \
   -p "true"
+
+

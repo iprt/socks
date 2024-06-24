@@ -9,5 +9,7 @@ dependencyResolutionManagement {
 include('commons')
 include('netty-socks')
 include('netty-tcp-proxy')
+include('netty-tcp-dns-proxy')
+
 include('advance:server')
 include('advance:client')
