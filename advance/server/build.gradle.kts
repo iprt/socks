@@ -26,9 +26,9 @@ tasks.jar {
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    configurations["runtimeClasspath"].forEach { file: File ->
-        from(zipTree(file.absoluteFile))
-    }
+    configurations.runtimeClasspath.get()
+        .filter { it.name.endsWith("jar") }
+        .forEach { file: File -> from(zipTree(file.absoluteFile)) }
 
     archiveFileName = "server.jar"
 
