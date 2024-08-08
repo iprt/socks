@@ -16,20 +16,44 @@ dependencies {
     implementation(project(":commons"))
 }
 
-tasks.compileJava {
-    dependsOn(":commons:build")
+tasks.register<Jar>("fatJar") {
+    archiveClassifier.set("all")
+
+    from(sourceSets.main.get().output)
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get()
+            .filter { it.name.endsWith("jar") }
+            .map { zipTree(it) }
+    })
+
+    manifest {
+        attributes["Main-Class"] = "org.iproute.SocksServer"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
 }
 
-tasks.jar {
-    manifest {
-        attributes("Main-Class" to "org.iproute.SocksServer")
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    configurations["runtimeClasspath"].forEach { file: File ->
-        from(zipTree(file.absoluteFile))
-    }
-    archiveFileName = "socks.jar"
+tasks.build {
+    dependsOn(tasks.named("fatJar"))
 }
+
+
+//tasks.compileJava {
+//    dependsOn(":commons:build")
+//}
+//
+//tasks.jar {
+//    manifest {
+//        attributes("Main-Class" to "org.iproute.SocksServer")
+//    }
+//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//    configurations["runtimeClasspath"].forEach { file: File ->
+//        from(zipTree(file.absoluteFile))
+//    }
+//    archiveFileName = "socks.jar"
+//}
 
 /*
 > Task :netty-socks:compileJava
