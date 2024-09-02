@@ -7,6 +7,7 @@ dependencyResolutionManagement {
 rootProject.name = "socks"
 
 include("commons")
+include("netty-http-proxy")
 include("netty-socks")
 include("netty-tcp-proxy")
 include("netty-tcp-dns-proxy")
