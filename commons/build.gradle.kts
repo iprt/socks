@@ -27,7 +27,9 @@ dependencies {
     api("ch.qos.logback:logback-classic:1.5.6")
     api("ch.qos.logback:logback-core:1.5.6")
 
-    api("com.alibaba.fastjson2:fastjson2:2.0.51.android8")
+    api("com.alibaba.fastjson2:fastjson2:2.0.53")
+
+    api("org.jetbrains:annotations:24.1.0")
 
     // junit-jupiter-engine 用于运行JUnit 5 引擎测试
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")

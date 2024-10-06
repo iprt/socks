@@ -22,6 +22,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.iproute.commons.utils.SocksServerUtils;
+import org.jetbrains.annotations.NotNull;
 
 @Slf4j
 public final class RelayHandler extends ChannelInboundHandlerAdapter {
@@ -38,7 +39,7 @@ public final class RelayHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+    public void channelRead(@NotNull ChannelHandlerContext ctx, @NotNull Object msg) {
         if (relayChannel.isActive()) {
             relayChannel.writeAndFlush(msg);
         } else {
@@ -47,7 +48,7 @@ public final class RelayHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
+    public void channelInactive(@NotNull ChannelHandlerContext ctx) {
         if (relayChannel.isActive()) {
             SocksServerUtils.closeOnFlush(relayChannel, "SocksServer relayChannel");
         } else {

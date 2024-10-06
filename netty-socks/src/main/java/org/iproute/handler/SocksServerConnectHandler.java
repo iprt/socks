@@ -35,6 +35,7 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.FutureListener;
 import io.netty.util.concurrent.Promise;
 import org.iproute.commons.utils.SocksServerUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
             promise.addListener(
                     new FutureListener<Channel>() {
                         @Override
-                        public void operationComplete(final Future<Channel> future) throws Exception {
+                        public void operationComplete(@NotNull final Future<Channel> future) throws Exception {
                             final Channel outboundChannel = future.getNow();
                             if (future.isSuccess()) {
                                 ChannelFuture responseFuture = ctx.channel().writeAndFlush(
@@ -63,7 +64,7 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
 
                                 responseFuture.addListener(new ChannelFutureListener() {
                                     @Override
-                                    public void operationComplete(ChannelFuture channelFuture) {
+                                    public void operationComplete(@NotNull ChannelFuture channelFuture) {
                                         ctx.pipeline().remove(SocksServerConnectHandler.this);
                                         outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
                                         ctx.pipeline().addLast(new RelayHandler(outboundChannel));
@@ -91,7 +92,7 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
             log.info("b.connect : {},{}", request.dstAddr(), request.dstPort());
             b.connect(request.dstAddr(), request.dstPort()).addListener(new ChannelFutureListener() {
                 @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
+                public void operationComplete(@NotNull ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
                         // Connection established use handler provided results
                         log.info("Connection established use handler provided results");
@@ -110,7 +111,7 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
             promise.addListener(
                     new FutureListener<Channel>() {
                         @Override
-                        public void operationComplete(final Future<Channel> future) throws Exception {
+                        public void operationComplete(@NotNull final Future<Channel> future) throws Exception {
                             final Channel outboundChannel = future.getNow();
                             if (future.isSuccess()) {
                                 ChannelFuture responseFuture =
@@ -122,7 +123,7 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
 
                                 responseFuture.addListener(new ChannelFutureListener() {
                                     @Override
-                                    public void operationComplete(ChannelFuture channelFuture) {
+                                    public void operationComplete(@NotNull ChannelFuture channelFuture) {
                                         ctx.pipeline().remove(SocksServerConnectHandler.this);
                                         outboundChannel.pipeline().addLast(new RelayHandler(ctx.channel()));
                                         ctx.pipeline().addLast(new RelayHandler(outboundChannel));
@@ -152,7 +153,7 @@ public final class SocksServerConnectHandler extends SimpleChannelInboundHandler
             log.info("b.connect : {},{}", request.dstAddr(), request.dstPort());
             b.connect(request.dstAddr(), request.dstPort()).addListener(new ChannelFutureListener() {
                 @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
+                public void operationComplete(@NotNull ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
                         // Connection established use handler provided results
                         log.info("Connection established use handler provided results");
